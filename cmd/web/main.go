@@ -32,7 +32,7 @@ func main() {
 
 	server := &http.Server{
 		Addr:    portNumber,
-		Handler: routes(&app),
+		Handler: routesCHI(&app),
 	}
 
 	err = server.ListenAndServe()
