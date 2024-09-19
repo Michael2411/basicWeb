@@ -10,6 +10,13 @@
                 crossorigin="anonymous"></script>
             <p>This is detials about this page</p>
             <p>This came from the Template {{index .StringMap "TEST"}}</p>
+            <p>
+                {{if ne (index .StringMap "RemoteIP") ""}}
+                    Your Remote IP is {{index .StringMap "RemoteIP"}}
+                {{else }}
+                    I don't know your IP address yet visit the <a href="/">Home Page</a> so I can set
+                {{end}}
+            </p>
         </div>
     </div>
 </div>

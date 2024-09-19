@@ -4,6 +4,7 @@ import (
 	models "GO-WEB/cmd/packages/Models"
 	"GO-WEB/cmd/packages/config"
 	renders "GO-WEB/cmd/packages/render"
+	"log"
 	"net/http"
 )
 
@@ -27,6 +28,9 @@ func NewHandlers(r *Repository) {
 }
 
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
+	remoteIp := r.RemoteAddr
+	log.Println(remoteIp)
+	m.App.Session.Put(r.Context(), "RemoteIP", remoteIp)
 	renders.RenderTemp(w, "home.page.tmpl", &models.TemplateData{})
 }
 
@@ -35,6 +39,8 @@ func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
 	//preform some logic
 	stringMaplocal := make(map[string]string)
 	stringMaplocal["TEST"] = "TEST12312412"
+	remoteIp := m.App.Session.GetString(r.Context(), "RemoteIP")
+	stringMaplocal["RemoteIP"] = remoteIp
 	renders.RenderTemp(w, "about.page.tmpl", &models.TemplateData{
 		StringMap: stringMaplocal,
 	})

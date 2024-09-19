@@ -7,12 +7,31 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
+
+	"github.com/alexedwards/scs/v2"
 )
 
 const portNumber = ":8080"
 
+var app config.AppConfig
+var session *scs.SessionManager
+
 func main() {
-	var app config.AppConfig
+
+	//change to true when in Prod
+	app.InProduction = false
+
+	session = scs.New()
+	session.Lifetime = 24 * time.Hour
+	// to make session persist if browser closed
+	session.Cookie.Persist = true
+	// how strict on what this cookie applies to
+	session.Cookie.SameSite = http.SameSiteLaxMode
+	// insists cookie be encrypted only from https , set to false because localHost is http
+	session.Cookie.Secure = app.InProduction
+
+	app.Session = session
 	tempCache, err := render.CreateTemplateCache()
 	if err != nil {
 		log.Fatal("Cannot Create Template Cache")
