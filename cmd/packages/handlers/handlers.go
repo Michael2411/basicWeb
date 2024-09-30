@@ -45,3 +45,15 @@ func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
 		StringMap: stringMaplocal,
 	})
 }
+
+func (m *Repository) Kratos(w http.ResponseWriter, r *http.Request) {
+	//preform some logic
+
+	renders.RenderTemp(w, "kratos.page.tmpl", &models.TemplateData{})
+}
+
+func (m *Repository) Batman(w http.ResponseWriter, r *http.Request) {
+	//preform some logic
+
+	renders.RenderTemp(w, "batman.page.tmpl", &models.TemplateData{})
+}
