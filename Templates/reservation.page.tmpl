@@ -1,0 +1,56 @@
+{{template "base" .}}
+{{define "headers"}}
+<title>Reservation</title>
+{{end}}
+{{define "content"}}
+<div class="container">
+    <div class="row">
+        <h1>Search For Availability</h1>
+        <form id="myForm" action="" method="get">
+            <div class="col">
+            <div class="mb-3">
+                <label for="startDate" class="form-label">Starting Date</label>
+                <input type="date" class="form-control" id="startDate" name="start_date" aria-describedby="dateHelp">
+                <div id="dateHelp" class="form-text">Enter Starting date of Reservation</div>
+            </div>
+        </div>
+            <div class="col">
+            <div class="mb-3">
+                <label for="endDate" class="form-label">Ending Date</label>
+                <input type="date" class="form-control" id="endDate" name="end_date" aria-describedby="enddateHelp">
+                <div id="enddateHelp" class="form-text">Enter Ending date of Reservation</div>
+            </div>
+        </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="checkBox">
+                <label class="form-check-label" for="checkBox">I agree that I will not misuse or damage the
+                    property</label>
+            </div>
+            <button type="submit" class="btn btn-primary" id="SubmitButotn" disabled>Submit</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('myForm');
+        const submitButton = document.getElementById('SubmitButotn');
+
+        // Function to check if all inputs are filled
+        function checkFormValidity() {
+            const email = document.getElementById('startDate').value;
+            const checkbox = document.getElementById('checkBox').checked;
+
+            // Enable the submit button only if all fields are filled and the checkbox is checked
+            if (email  && checkbox) {
+                submitButton.disabled = false;
+            } else {
+                submitButton.disabled = true;
+            }
+        }
+
+        // Add event listeners to check form validity on input change
+        form.addEventListener('input', checkFormValidity);
+    });
+</script>
+{{end}}
