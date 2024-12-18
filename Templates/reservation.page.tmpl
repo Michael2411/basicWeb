@@ -3,54 +3,159 @@
 <title>Reservation</title>
 {{end}}
 {{define "content"}}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+<style>
+    
+</style>
 <div class="container">
     <div class="row">
-        <h1>Search For Availability</h1>
-        <form id="myForm" action="" method="get">
-            <div class="col">
-            <div class="mb-3">
-                <label for="startDate" class="form-label">Starting Date</label>
-                <input type="date" class="form-control" id="startDate" name="start_date" aria-describedby="dateHelp">
-                <div id="dateHelp" class="form-text">Enter Starting date of Reservation</div>
-            </div>
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            <h1>Search For Availability</h1>
+            <form id="myForm" action="" method="get" novalidate class="needs-validation">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="startDate" class="form-label">Arrival</label>
+                            <div class="input-group">
+                                <input required type="text" class="form-control date-picker" id="startDate"
+                                    name="start_date" aria-describedby="dateHelp" placeholder="YYYY-MM-DD">
+                                <span class="input-group-text calendar-icon">
+                                    <i class="bi bi-calendar"></i> <!-- Bootstrap Icons -->
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="endDate" class="form-label">Departure</label>
+                            <div class="input-group">
+                                <input required type="text" class="form-control date-picker" id="endDate"
+                                    name="end_date" aria-describedby="enddateHelp" placeholder="YYYY-MM-DD">
+                                <span class="input-group-text calendar-icon">
+                                    <i class="bi bi-calendar"></i> <!-- Bootstrap Icons -->
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input required type="checkbox" class="form-check-input" id="checkBox">
+                        <label class="form-check-label" for="checkBox">I agree that I will not misuse or damage the
+                            property</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="SubmitButton">Search Availability</button>
+                </div>
+            </form>
         </div>
-            <div class="col">
-            <div class="mb-3">
-                <label for="endDate" class="form-label">Ending Date</label>
-                <input type="date" class="form-control" id="endDate" name="end_date" aria-describedby="enddateHelp">
-                <div id="enddateHelp" class="form-text">Enter Ending date of Reservation</div>
-            </div>
-        </div>
-            <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="checkBox">
-                <label class="form-check-label" for="checkBox">I agree that I will not misuse or damage the
-                    property</label>
-            </div>
-            <button type="submit" class="btn btn-primary" id="SubmitButotn" disabled>Submit</button>
-        </form>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/toastify-js@1.12.0"></script>
 <script>
+    (() => {
+        'use strict'
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        const forms = document.querySelectorAll('.needs-validation')
+
+        // Loop over them and prevent submission
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                    let alertMessage = "Please Enter All Required Data"
+                    let color = "linear-gradient(to right, #ff5f6d, #ffc3a0)"
+                    let alertType= "error"
+                    showToastMessage(alertMessage,color,alertType)
+                } else{
+                    let alertMessage = "Your action was successful!"
+                    let color = "linear-gradient(to right, #00b09b, #96c93d)"
+                    let alertType= "info"
+                    showToastMessage(alertMessage,color,alertType)
+                }
+
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+
     document.addEventListener('DOMContentLoaded', function () {
-        const form = document.getElementById('myForm');
-        const submitButton = document.getElementById('SubmitButotn');
+        // Select start date and end date inputs
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
 
-        // Function to check if all inputs are filled
-        function checkFormValidity() {
-            const email = document.getElementById('startDate').value;
-            const checkbox = document.getElementById('checkBox').checked;
-
-            // Enable the submit button only if all fields are filled and the checkbox is checked
-            if (email  && checkbox) {
-                submitButton.disabled = false;
-            } else {
-                submitButton.disabled = true;
+        // Initialize Flatpickr for both start and end date inputs
+        flatpickr(startDateInput, {
+            dateFormat: "Y-m-d",
+            onChange: function (selectedDates, dateStr, instance) {
+                console.log(`Start Date selected: ${dateStr}`);
+                // Set minimum date for end date to be equal or later than the start date
+                endDateInput._flatpickr.set('minDate', dateStr);
             }
-        }
+        });
 
-        // Add event listeners to check form validity on input change
-        form.addEventListener('input', checkFormValidity);
+        flatpickr(endDateInput, {
+            dateFormat: "Y-m-d",
+            onChange: function (selectedDates, dateStr, instance) {
+                console.log(`End Date selected: ${dateStr}`);
+            }
+        });
+
+        // Open Flatpickr on calendar icon click
+        const icons = document.querySelectorAll('.calendar-icon');
+        icons.forEach(icon => {
+            icon.addEventListener('click', function () {
+                const input = this.previousElementSibling; // Target the input field
+                input._flatpickr.open(); // Open Flatpickr
+            });
+        });
+
+        // Custom validation for the date range
+        const form = document.getElementById('myForm');
+        form.addEventListener('submit', function (event) {
+            // Ensure both dates are filled
+            if (!startDateInput.value || !endDateInput.value) {
+                if (!startDateInput.value) startDateInput.classList.add('is-invalid');
+                if (!endDateInput.value) endDateInput.classList.add('is-invalid');
+                event.preventDefault();
+                event.stopPropagation();
+            } else {
+                startDateInput.classList.remove('is-invalid');
+                endDateInput.classList.remove('is-invalid');
+                startDateInput.classList.add('is-valid');
+                endDateInput.classList.add('is-valid');
+            }
+
+            form.classList.add('was-validated'); // Apply Bootstrap styles
+        });
     });
+
+
+
+// // Success notification
+// function showToastSuccess() {
+//   Toastify({
+//     text: "Your action was successful!",
+//     backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)", // Green color for success
+//     className: "info", // Class for info messages
+//     position: "right",
+//     duration: 3000
+//   }).showToast();
+// }
+
+// General Notification
+function showToastMessage(message,color,type) {
+  Toastify({
+    text: message,
+    backgroundColor: color, // Red color for error
+    className: type, // Class for error messages
+    position: "right",
+    duration: 3000
+  }).showToast();
+}
 </script>
+
 {{end}}

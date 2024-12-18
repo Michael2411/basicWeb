@@ -1,6 +1,6 @@
 {{template "base" .}}
 {{define "headers"}}
-<title>About Page</title>
+<title>Kratos Room</title>
 {{end}}
 {{define "content"}}
 
@@ -11,14 +11,26 @@
         </div>
     </div>
     <div class="row"></div>
-        <div class="col">
-            <img src="/static/Images/kratos.png" class="img-fluid img-thumbnail mx-auto d-block room-image">
-        </div>
+    <div class="col">
+        <img src="/static/Images/kratos.png" class="img-fluid img-thumbnail mx-auto d-block room-image">
     </div>
-    <div class="row"></div>
-        <div class="col text-center">
-            <p>This is Kratos Room, where rested after killing all of Olypmus and also after his great fight with Odin</p>
-        </div>
+</div>
+<div class="row"></div>
+<div class="col text-center">
+    <p>This is Kratos Room, where rested after killing all of Olypmus and also after his great fight with Odin</p>
+</div>
+
+</div>
+
+<div class="row">
+    <div class="col text-center">
+        <a href="/makeReservation">
+            <button type="button" class="btn btn-primary">Reserve Room</button>
+        </a>
     </div>
+</div>
+
+
+
 </div>
 {{end}}

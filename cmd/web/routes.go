@@ -31,6 +31,8 @@ func routesCHI(app *config.AppConfig) http.Handler {
 	mux.Get("/kratos-room", http.HandlerFunc(handlers.Repo.Kratos))
 	mux.Get("/batman-room", http.HandlerFunc(handlers.Repo.Batman))
 	mux.Get("/reserve", http.HandlerFunc(handlers.Repo.Reserve))
+	mux.Get("/contact", http.HandlerFunc(handlers.Repo.Contact))
+	mux.Get("/makeReservation", http.HandlerFunc(handlers.Repo.MakeReservation))
 	fileServer := http.FileServer(http.Dir("./static/"))
 	mux.Handle("/static/*", http.StripPrefix("/static", fileServer))
 

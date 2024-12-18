@@ -47,19 +47,26 @@ func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *Repository) Kratos(w http.ResponseWriter, r *http.Request) {
-	//preform some logic
 
 	renders.RenderTemp(w, "kratos.page.tmpl", &models.TemplateData{})
 }
 
 func (m *Repository) Batman(w http.ResponseWriter, r *http.Request) {
-	//preform some logic
 
 	renders.RenderTemp(w, "batman.page.tmpl", &models.TemplateData{})
 }
 
 func (m *Repository) Reserve(w http.ResponseWriter, r *http.Request) {
-	//preform some logic
 
 	renders.RenderTemp(w, "reservation.page.tmpl", &models.TemplateData{})
+}
+
+func (m *Repository) Contact(w http.ResponseWriter, r *http.Request) {
+
+	renders.RenderTemp(w, "contact.page.tmpl", &models.TemplateData{})
+}
+
+func (m *Repository) MakeReservation(w http.ResponseWriter, r *http.Request) {
+
+	renders.RenderTemp(w, "makeReservation.page.tmpl", &models.TemplateData{})
 }
