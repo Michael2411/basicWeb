@@ -1,6 +1,7 @@
 {{template "base" .}}
 {{define "headers"}}
 <title>Kratos Room</title>
+
 {{end}}
 {{define "content"}}
 
@@ -24,12 +25,82 @@
 
 <div class="row">
     <div class="col text-center">
-        <a href="/makeReservation">
-            <button type="button" class="btn btn-primary">Reserve Room</button>
-        </a>
+        <button type="button" id="reservationButton" class="btn btn-primary">Reserve Room</button>
     </div>
 </div>
 
+<script>
+    //popout form using sweetalert2
+    async function popUpInput(output) {
+        const {
+            msg = "",
+            title = "",
+        } = output
+
+        const { value: formValues } = await Swal.fire({
+            title: title,
+            html: msg,
+            backdrop: false,
+            focusConfirm: false,
+            showCancelButton: true,
+            willOpen: () => {
+                // Select start date and end date inputs
+                const startDateInput = document.getElementById('start');
+                const endDateInput = document.getElementById('end');
+                // Initialize Flatpickr for both start and end date inputs
+                flatpickr(startDateInput, {
+                    dateFormat: "Y-m-d",
+                    onChange: function (selectedDates, dateStr, instance) {
+                        console.log(`Start Date selected: ${dateStr}`);
+                        // Set minimum date for end date to be equal or later than the start date
+                        endDateInput._flatpickr.set('minDate', dateStr);
+                    }
+                });
+
+                flatpickr(endDateInput, {
+                    dateFormat: "Y-m-d",
+                    onChange: function (selectedDates, dateStr, instance) {
+                        console.log(`End Date selected: ${dateStr}`);
+                    }
+                });
+            },
+
+            // do things after the popout is opened
+            didOpen:()=>{
+                document.getElementById('start').removeAttribute("disabled");
+                document.getElementById('end').removeAttribute("disabled");
+            },
+            preConfirm: () => {
+
+                return [
+                    `Start Date is ${document.getElementById("start").value}<br>`,
+                    `End Date is ${document.getElementById("end").value}`
+                ];
+            }
+        });
+        if (formValues) {
+            Swal.fire(JSON.stringify(formValues));
+        }
+
+    }
+</script>
+<script>
+    document.getElementById("reservationButton").addEventListener("click", function () {
+        let html = `
+        <form id="makeReservation" action="" method="post" novalidate class="needs-validation">
+    <div class="row"> <!-- Bootstrap row for aligning inputs -->
+        <div class="col-md-6"> <!-- First column -->
+            <input disabled required class="form-control" type="text" name="start" id="start" placeholder="Arrival">
+        </div>
+        <div class="col-md-6"> <!-- Second column -->
+            <input disabled required class="form-control" type="text" name="end" id="end" placeholder="Departure">
+        </div>
+    </div>
+</form>
+        `;
+        popUpInput({ msg: html })
+    })
+</script>
 
 
 </div>

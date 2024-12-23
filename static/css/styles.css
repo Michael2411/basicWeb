@@ -1,0 +1,16 @@
+.my-footer {
+    background-color: #110431;
+    margin-top: 1.5em;
+    height: 5em;
+    padding: 2.5em;
+    color: white;
+    font-size: 2em;
+  }
+
+  .room-image{
+    max-width: 50%;
+  }
+
+  .calendar-icon {
+  cursor: pointer; /* Changes the cursor to a pointer when hovering */
+}
