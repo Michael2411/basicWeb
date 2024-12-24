@@ -8,6 +8,8 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+
+	"github.com/justinas/nosurf"
 )
 
 var app *config.AppConfig
@@ -19,10 +21,11 @@ func NewTemplates(a *config.AppConfig) {
 
 // function to add default data to pages while renedering
 
-func AddDefaultData(data *models.TemplateData) *models.TemplateData {
+func AddDefaultData(data *models.TemplateData, request *http.Request) *models.TemplateData {
+	data.CSRFToken = nosurf.Token(request)
 	return data
 }
-func RenderTemp(w http.ResponseWriter, tmpl string, data *models.TemplateData) {
+func RenderTemp(w http.ResponseWriter, tmpl string, data *models.TemplateData, request *http.Request) {
 	var templateCache map[string]*template.Template
 	var err error
 
@@ -47,7 +50,7 @@ func RenderTemp(w http.ResponseWriter, tmpl string, data *models.TemplateData) {
 	// it gives better handling of this template
 	buffer := new(bytes.Buffer)
 
-	data = AddDefaultData(data)
+	data = AddDefaultData(data, request)
 
 	err = template.Execute(buffer, data)
 	if err != nil {

@@ -23,6 +23,8 @@ func routesCHI(app *config.AppConfig) http.Handler {
 	mux := chi.NewRouter()
 
 	mux.Use(middleware.Recoverer)
+
+	//no surf is used to ignore any post request without CSRF Token
 	mux.Use(NoSurf)
 	mux.Use(SessionLoad)
 
@@ -31,6 +33,7 @@ func routesCHI(app *config.AppConfig) http.Handler {
 	mux.Get("/kratos-room", http.HandlerFunc(handlers.Repo.Kratos))
 	mux.Get("/batman-room", http.HandlerFunc(handlers.Repo.Batman))
 	mux.Get("/reserve", http.HandlerFunc(handlers.Repo.Reserve))
+	mux.Post("/reserve", http.HandlerFunc(handlers.Repo.PostReserve))
 	mux.Get("/contact", http.HandlerFunc(handlers.Repo.Contact))
 	mux.Get("/makeReservation", http.HandlerFunc(handlers.Repo.MakeReservation))
 	fileServer := http.FileServer(http.Dir("./static/"))

@@ -5,14 +5,14 @@
 {{end}}
 {{define "content"}}
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
 <div class="container">
     <div class="row">
         <div class="col-md-3"></div>
         <div class="col-md-6">
             <h1>Search For Availability</h1>
-            <form id="myForm" action="" method="get" novalidate class="needs-validation">
+            <form id="myForm" action="/reserve" method="post" novalidate class="needs-validation">
+                <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
@@ -49,114 +49,112 @@
         </div>
     </div>
 </div>
+{{end}}
 
-<script src="https://cdn.jsdelivr.net/npm/toastify-js@1.12.0"></script>
-<script>
+{{define "js"}}
+ <!-- This Script is used for the search Availability in Reservation page -->
+ <script>
     function promptMessage() {
-        let errorMessage = function () {
-            let alertMessage = "Please Enter All Required Data"
-            let color = "linear-gradient(to right, #ff5f6d, #ffc3a0)"
-            let alertType = "error"
-            showToastMessage(alertMessage, color, alertType)
-        }
+      let errorMessage = function () {
+        let alertMessage = "Please Enter All Required Data"
+        let color = "linear-gradient(to right, #ff5f6d, #ffc3a0)"
+        let alertType = "error"
+        showToastMessage(alertMessage, color, alertType)
+      }
 
-        let successMessage = function () {
-            let alertMessage = "Your action was successful!"
-            let color = "linear-gradient(to right, #00b09b, #96c93d)"
-            let alertType = "info"
-            showToastMessage(alertMessage, color, alertType)
-        }
+      let successMessage = function () {
+        let alertMessage = "Your action was successful!"
+        let color = "linear-gradient(to right, #00b09b, #96c93d)"
+        let alertType = "info"
+        showToastMessage(alertMessage, color, alertType)
+      }
 
-        return {
-            errorMessage: errorMessage,
-            successMessage: successMessage,
-        }
+      return {
+        errorMessage: errorMessage,
+        successMessage: successMessage,
+      }
     }
     // General Notification using toastify
     function showToastMessage(message, color, type) {
-        Toastify({
-            text: message,
-            backgroundColor: color, // Red color for error
-            className: type, // Class for error messages
-            position: "right",
-            duration: 3000
-        }).showToast();
+      Toastify({
+        text: message,
+        backgroundColor: color, // Red color for error
+        className: type, // Class for error messages
+        position: "right",
+        duration: 3000
+      }).showToast();
     }
 
-
-   
-</script>
-<script>
     (() => {
-        'use strict'
-        // Fetch all the forms we want to apply custom Bootstrap validation styles to
-        const forms = document.querySelectorAll('.needs-validation')
-        let notificationMessage = promptMessage()
-        // Loop over them and prevent submission
-        Array.from(forms).forEach(form => {
-            form.addEventListener('submit', event => {
-                if (!form.checkValidity()) {
-                    event.preventDefault()
-                    event.stopPropagation()
-                    notificationMessage.errorMessage()
-                } else {
-                    notificationMessage.successMessage()
-                }
+      'use strict'
+      // Fetch all the forms we want to apply custom Bootstrap validation styles to
+      const forms = document.querySelectorAll('.needs-validation')
+      let notificationMessage = promptMessage()
+      // Loop over them and prevent submission
+      Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+          if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+            notificationMessage.errorMessage()
+          } else {
+            notificationMessage.successMessage()
+          }
 
-                form.classList.add('was-validated')
-            }, false)
-        })
+          form.classList.add('was-validated')
+        }, false)
+      })
     })()
 
     document.addEventListener('DOMContentLoaded', function () {
-        // Select start date and end date inputs
-        const startDateInput = document.getElementById('startDate');
-        const endDateInput = document.getElementById('endDate');
+      // Select start date and end date inputs
+      const startDateInput = document.getElementById('startDate');
+      const endDateInput = document.getElementById('endDate');
 
-        // Initialize Flatpickr for both start and end date inputs
-        flatpickr(startDateInput, {
-            dateFormat: "Y-m-d",
-            onChange: function (selectedDates, dateStr, instance) {
-                console.log(`Start Date selected: ${dateStr}`);
-                // Set minimum date for end date to be equal or later than the start date
-                endDateInput._flatpickr.set('minDate', dateStr);
-            }
+      // Initialize Flatpickr for both start and end date inputs
+      flatpickr(startDateInput, {
+        dateFormat: "Y-m-d",
+        onChange: function (selectedDates, dateStr, instance) {
+          console.log(`Start Date selected: ${dateStr}`);
+          // Set minimum date for end date to be equal or later than the start date
+          endDateInput._flatpickr.set('minDate', dateStr);
+        }
+      });
+
+      flatpickr(endDateInput, {
+        dateFormat: "Y-m-d",
+        onChange: function (selectedDates, dateStr, instance) {
+          console.log(`End Date selected: ${dateStr}`);
+        }
+      });
+
+      // Open Flatpickr on calendar icon click
+      const icons = document.querySelectorAll('.calendar-icon');
+      icons.forEach(icon => {
+        icon.addEventListener('click', function () {
+          const input = this.previousElementSibling; // Target the input field
+          input._flatpickr.open(); // Open Flatpickr
         });
+      });
 
-        flatpickr(endDateInput, {
-            dateFormat: "Y-m-d",
-            onChange: function (selectedDates, dateStr, instance) {
-                console.log(`End Date selected: ${dateStr}`);
-            }
-        });
+      // Custom validation for the date range
+      const form = document.getElementById('myForm');
+      form.addEventListener('submit', function (event) {
+        // Ensure both dates are filled
+        if (!startDateInput.value || !endDateInput.value) {
+          if (!startDateInput.value) startDateInput.classList.add('is-invalid');
+          if (!endDateInput.value) endDateInput.classList.add('is-invalid');
+          event.preventDefault();
+          event.stopPropagation();
+        } else {
+          startDateInput.classList.remove('is-invalid');
+          endDateInput.classList.remove('is-invalid');
+          startDateInput.classList.add('is-valid');
+          endDateInput.classList.add('is-valid');
+        }
 
-        // Open Flatpickr on calendar icon click
-        const icons = document.querySelectorAll('.calendar-icon');
-        icons.forEach(icon => {
-            icon.addEventListener('click', function () {
-                const input = this.previousElementSibling; // Target the input field
-                input._flatpickr.open(); // Open Flatpickr
-            });
-        });
-
-        // Custom validation for the date range
-        const form = document.getElementById('myForm');
-        form.addEventListener('submit', function (event) {
-            // Ensure both dates are filled
-            if (!startDateInput.value || !endDateInput.value) {
-                if (!startDateInput.value) startDateInput.classList.add('is-invalid');
-                if (!endDateInput.value) endDateInput.classList.add('is-invalid');
-                event.preventDefault();
-                event.stopPropagation();
-            } else {
-                startDateInput.classList.remove('is-invalid');
-                endDateInput.classList.remove('is-invalid');
-                startDateInput.classList.add('is-valid');
-                endDateInput.classList.add('is-valid');
-            }
-
-            form.classList.add('was-validated'); // Apply Bootstrap styles
-        });
+        form.classList.add('was-validated'); // Apply Bootstrap styles
+      });
     });
 
 
@@ -172,7 +170,5 @@
     //   }).showToast();
     // }
 
-
-
-</script>
-{{end}}
+  </script>
+  {{end}}

@@ -31,7 +31,7 @@ func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
 	remoteIp := r.RemoteAddr
 	log.Println(remoteIp)
 	m.App.Session.Put(r.Context(), "RemoteIP", remoteIp)
-	renders.RenderTemp(w, "home.page.tmpl", &models.TemplateData{})
+	renders.RenderTemp(w, "home.page.tmpl", &models.TemplateData{}, r)
 }
 
 // About is the About page Handler
@@ -43,30 +43,36 @@ func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
 	stringMaplocal["RemoteIP"] = remoteIp
 	renders.RenderTemp(w, "about.page.tmpl", &models.TemplateData{
 		StringMap: stringMaplocal,
-	})
+	}, r)
 }
 
 func (m *Repository) Kratos(w http.ResponseWriter, r *http.Request) {
 
-	renders.RenderTemp(w, "kratos.page.tmpl", &models.TemplateData{})
+	renders.RenderTemp(w, "kratos.page.tmpl", &models.TemplateData{}, r)
 }
 
 func (m *Repository) Batman(w http.ResponseWriter, r *http.Request) {
 
-	renders.RenderTemp(w, "batman.page.tmpl", &models.TemplateData{})
+	renders.RenderTemp(w, "batman.page.tmpl", &models.TemplateData{}, r)
 }
 
 func (m *Repository) Reserve(w http.ResponseWriter, r *http.Request) {
 
-	renders.RenderTemp(w, "reservation.page.tmpl", &models.TemplateData{})
+	renders.RenderTemp(w, "reservation.page.tmpl", &models.TemplateData{}, r)
+}
+
+func (m *Repository) PostReserve(w http.ResponseWriter, r *http.Request) {
+	startDate := r.Form.Get("start_date")
+	endDate := r.Form.Get("end_date")
+	w.Write([]byte(startDate + "  " + endDate))
 }
 
 func (m *Repository) Contact(w http.ResponseWriter, r *http.Request) {
 
-	renders.RenderTemp(w, "contact.page.tmpl", &models.TemplateData{})
+	renders.RenderTemp(w, "contact.page.tmpl", &models.TemplateData{}, r)
 }
 
 func (m *Repository) MakeReservation(w http.ResponseWriter, r *http.Request) {
 
-	renders.RenderTemp(w, "makeReservation.page.tmpl", &models.TemplateData{})
+	renders.RenderTemp(w, "makeReservation.page.tmpl", &models.TemplateData{}, r)
 }

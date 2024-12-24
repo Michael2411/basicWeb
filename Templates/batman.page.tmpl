@@ -12,4 +12,30 @@
         </div>
     </div>
 </div>
+
+<div class="row">
+    <div class="col text-center">
+        <button type="button" id="reservationButton" class="btn btn-primary">Reserve Room</button>
+    </div>
+</div>
+{{end}}
+
+{{define "js"}}
+<script>
+    document.getElementById("reservationButton").addEventListener("click", function () {
+        let html = `
+        <form id="makeReservation" action="" method="post" novalidate class="needs-validation">
+    <div class="row"> <!-- Bootstrap row for aligning inputs -->
+        <div class="col-md-6"> <!-- First column -->
+            <input disabled required class="form-control" type="text" name="start" id="start" placeholder="Arrival">
+        </div>
+        <div class="col-md-6"> <!-- Second column -->
+            <input disabled required class="form-control" type="text" name="end" id="end" placeholder="Departure">
+        </div>
+    </div>
+</form>
+        `;
+        popUpInput({ msg: html, title: "Select Arrival and Departure Dates" })
+    })
+</script>
 {{end}}
