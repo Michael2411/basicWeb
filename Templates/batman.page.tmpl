@@ -35,7 +35,66 @@
     </div>
 </form>
         `;
-        popUpInput({ msg: html, title: "Select Arrival and Departure Dates" })
+        popUpInput({
+            msg: html,
+            title: "Select Arrival and Departure Dates",
+            willOpen: () => {
+                // Select start date and end date inputs
+                const startDateInput = document.getElementById('start');
+                const endDateInput = document.getElementById('end');
+                // Initialize Flatpickr for both start and end date inputs
+                flatpickr(startDateInput, {
+                    dateFormat: "Y-m-d",
+                    onChange: function (selectedDates, dateStr, instance) {
+                        console.log(`Start Date selected: ${dateStr}`);
+                        // Set minimum date for end date to be equal or later than the start date
+                        endDateInput._flatpickr.set('minDate', dateStr);
+                    }
+                });
+
+                flatpickr(endDateInput, {
+                    dateFormat: "Y-m-d",
+                    onChange: function (selectedDates, dateStr, instance) {
+                        console.log(`End Date selected: ${dateStr}`);
+                    }
+                });
+            },
+            didOpen: () => {
+                document.getElementById('start').removeAttribute("disabled");
+                document.getElementById('end').removeAttribute("disabled");
+
+            },
+            preConfirm: () => {
+                const startDate = document.getElementById("start").value;
+                const endDate = document.getElementById("end").value;
+
+                // Validation logic
+                if (!startDate || !endDate) {
+                    Swal.showValidationMessage("Please Enter Both Dates");
+                    return false; // Prevent closing the modal
+                };
+                return [
+                    `Start Date is ${document.getElementById("start").value}`,
+                    `End Date is ${document.getElementById("end").value}`
+                ];
+            },
+            callback: function (result) {
+                let form = document.getElementById("searchAvailability");
+                let formData = new FormData(form);
+                formData.append("csrf_token", "{{.CSRFToken}}")
+
+                if (result !== false) {
+                    fetch("/search-availability-json", {
+                        method: "post",
+                        body: formData
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(data)
+                        })
+                }
+            }
+        })
     })
 </script>
 {{end}}

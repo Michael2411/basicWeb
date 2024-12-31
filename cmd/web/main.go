@@ -1,9 +1,9 @@
 package main
 
 import (
-	"GO-WEB/cmd/packages/config"
-	handlers "GO-WEB/cmd/packages/handlers"
-	"GO-WEB/cmd/packages/render"
+	"GO-WEB/internal/config"
+	handlers "GO-WEB/internal/handlers"
+	"GO-WEB/internal/render"
 	"fmt"
 	"log"
 	"net/http"

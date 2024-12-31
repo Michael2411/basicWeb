@@ -1,9 +1,10 @@
 package handlers
 
 import (
-	models "GO-WEB/cmd/packages/Models"
-	"GO-WEB/cmd/packages/config"
-	renders "GO-WEB/cmd/packages/render"
+	models "GO-WEB/internal/Models"
+	"GO-WEB/internal/config"
+	renders "GO-WEB/internal/render"
+	"encoding/json"
 	"log"
 	"net/http"
 )
@@ -65,6 +66,23 @@ func (m *Repository) PostReserve(w http.ResponseWriter, r *http.Request) {
 	startDate := r.Form.Get("start_date")
 	endDate := r.Form.Get("end_date")
 	w.Write([]byte(startDate + "  " + endDate))
+}
+
+type jsonResponse struct {
+	OK      bool   `json:"ok"`
+	Message string `json:"message"`
+}
+
+// handles request and sends JSON Response
+func (m *Repository) RoomAvailabilityJson(w http.ResponseWriter, r *http.Request) {
+	response := jsonResponse{OK: true, Message: "Available"}
+
+	out, err := json.MarshalIndent(response, "", "     ")
+	if err != nil {
+		log.Println(err)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(out)
 }
 
 func (m *Repository) Contact(w http.ResponseWriter, r *http.Request) {

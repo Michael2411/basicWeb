@@ -79,7 +79,7 @@
     </div>
   </div>
 
-  
+
   {{block "js" .}}
   {{end}}
   <!-- This script is used for the book room button in all the rooms -->
@@ -91,64 +91,49 @@
         title = "",
       } = output
 
-      const { value: formValues } = await Swal.fire({
+      const { value: result } = await Swal.fire({
         title: title,
         html: msg,
         backdrop: false,
         focusConfirm: false,
         showCancelButton: true,
         willOpen: () => {
-          // Select start date and end date inputs
-          const startDateInput = document.getElementById('start');
-          const endDateInput = document.getElementById('end');
-          // Initialize Flatpickr for both start and end date inputs
-          flatpickr(startDateInput, {
-            dateFormat: "Y-m-d",
-            onChange: function (selectedDates, dateStr, instance) {
-              console.log(`Start Date selected: ${dateStr}`);
-              // Set minimum date for end date to be equal or later than the start date
-              endDateInput._flatpickr.set('minDate', dateStr);
-            }
-          });
-
-          flatpickr(endDateInput, {
-            dateFormat: "Y-m-d",
-            onChange: function (selectedDates, dateStr, instance) {
-              console.log(`End Date selected: ${dateStr}`);
-            }
-          });
+         if(output.willOpen !== undefined){
+           output.willOpen();
+         }
         },
-
         // do things after the popout is opened
         didOpen: () => {
-          document.getElementById('start').removeAttribute("disabled");
-          document.getElementById('end').removeAttribute("disabled");
-          
+          if(output.didOpen !== undefined){
+           output.didOpen();
+         }
         },
         preConfirm: () => {
-          const startDate = document.getElementById("start").value;
-          const endDate = document.getElementById("end").value;
-
-            // Validation logic
-           if (!startDate || !endDate) {
-                Swal.showValidationMessage("Please Enter Both Dates");
-                return false; // Prevent closing the modal
-            };
-          return [
-            `Start Date is ${document.getElementById("start").value}`,
-            `End Date is ${document.getElementById("end").value}`
-          ];
+          if(output.preConfirm !== undefined){
+           output.preConfirm();
+         }
         }
       });
-      if (formValues) {
-        Swal.fire(JSON.stringify(formValues));
+      if (result) {
+        if (result.dismiss !== Swal.DismissReason.cancel) {
+          if (result.value !== "") {
+            if (output.callback !== undefined) {
+              output.callback(result);
+
+            }
+          } else {
+            output.callback(false)
+          }
+        } else {
+          output.callback(false)
+        }
       }
 
     }
 
   </script>
 
- 
+
 </body>
 
 </html>

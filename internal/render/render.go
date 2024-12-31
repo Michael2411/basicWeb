@@ -1,8 +1,8 @@
 package render
 
 import (
-	models "GO-WEB/cmd/packages/Models"
-	"GO-WEB/cmd/packages/config"
+	models "GO-WEB/internal/Models"
+	"GO-WEB/internal/config"
 	"bytes"
 	"html/template"
 	"log"

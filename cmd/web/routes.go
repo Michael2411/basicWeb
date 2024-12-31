@@ -1,8 +1,8 @@
 package main
 
 import (
-	"GO-WEB/cmd/packages/config"
-	"GO-WEB/cmd/packages/handlers"
+	"GO-WEB/internal/config"
+	"GO-WEB/internal/handlers"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -34,6 +34,9 @@ func routesCHI(app *config.AppConfig) http.Handler {
 	mux.Get("/batman-room", http.HandlerFunc(handlers.Repo.Batman))
 	mux.Get("/reserve", http.HandlerFunc(handlers.Repo.Reserve))
 	mux.Post("/reserve", http.HandlerFunc(handlers.Repo.PostReserve))
+
+	mux.Post("/search-availability-json", http.HandlerFunc(handlers.Repo.RoomAvailabilityJson))
+
 	mux.Get("/contact", http.HandlerFunc(handlers.Repo.Contact))
 	mux.Get("/makeReservation", http.HandlerFunc(handlers.Repo.MakeReservation))
 	fileServer := http.FileServer(http.Dir("./static/"))
