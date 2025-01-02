@@ -1,5 +1,7 @@
 package models
 
+import "GO-WEB/internal/forms"
+
 // Holds Data sent from handlers to Templates
 type TemplateData struct {
 	StringMap    map[string]string
@@ -10,4 +12,13 @@ type TemplateData struct {
 	FlashMessage string
 	Warning      string
 	Error        string
+	Form         *forms.Form
+}
+
+//holds reservation Data
+type Reservation struct {
+	FirstName string
+	LastName  string
+	Email     string
+	Phone     string
 }

@@ -54,57 +54,7 @@
 {{define "js"}}
  <!-- This Script is used for the search Availability in Reservation page -->
  <script>
-    function promptMessage() {
-      let errorMessage = function () {
-        let alertMessage = "Please Enter All Required Data"
-        let color = "linear-gradient(to right, #ff5f6d, #ffc3a0)"
-        let alertType = "error"
-        showToastMessage(alertMessage, color, alertType)
-      }
-
-      let successMessage = function () {
-        let alertMessage = "Your action was successful!"
-        let color = "linear-gradient(to right, #00b09b, #96c93d)"
-        let alertType = "info"
-        showToastMessage(alertMessage, color, alertType)
-      }
-
-      return {
-        errorMessage: errorMessage,
-        successMessage: successMessage,
-      }
-    }
-    // General Notification using toastify
-    function showToastMessage(message, color, type) {
-      Toastify({
-        text: message,
-        backgroundColor: color, // Red color for error
-        className: type, // Class for error messages
-        position: "right",
-        duration: 3000
-      }).showToast();
-    }
-
-    (() => {
-      'use strict'
-      // Fetch all the forms we want to apply custom Bootstrap validation styles to
-      const forms = document.querySelectorAll('.needs-validation')
-      let notificationMessage = promptMessage()
-      // Loop over them and prevent submission
-      Array.from(forms).forEach(form => {
-        form.addEventListener('submit', event => {
-          if (!form.checkValidity()) {
-            event.preventDefault()
-            event.stopPropagation()
-            notificationMessage.errorMessage()
-          } else {
-            notificationMessage.successMessage()
-          }
-
-          form.classList.add('was-validated')
-        }, false)
-      })
-    })()
+    
 
     document.addEventListener('DOMContentLoaded', function () {
       // Select start date and end date inputs

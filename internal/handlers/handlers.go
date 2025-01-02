@@ -3,6 +3,7 @@ package handlers
 import (
 	models "GO-WEB/internal/Models"
 	"GO-WEB/internal/config"
+	"GO-WEB/internal/forms"
 	renders "GO-WEB/internal/render"
 	"encoding/json"
 	"log"
@@ -91,6 +92,50 @@ func (m *Repository) Contact(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *Repository) MakeReservation(w http.ResponseWriter, r *http.Request) {
+	var emptyReservation models.Reservation
+	data := make(map[string]interface{})
+	// Should have same name of the value of the data in PostMakeReservation
+	data["reservation"] = emptyReservation
 
-	renders.RenderTemp(w, "makeReservation.page.tmpl", &models.TemplateData{}, r)
+	// passing the form so that we can re-render the form based on the field validation and don't lose anything entered
+	renders.RenderTemp(w, "makeReservation.page.tmpl",
+		&models.TemplateData{
+			Form: forms.NewForm(nil),
+			Data: data,
+		}, r)
+}
+
+func (m *Repository) PostMakeReservation(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	reservation := models.Reservation{
+		FirstName: r.Form.Get("first_name"),
+		LastName:  r.Form.Get("last_name"),
+		Email:     r.Form.Get("email"),
+		Phone:     r.Form.Get("phone_Number"),
+	}
+
+	form := forms.NewForm(r.PostForm)
+
+	form.RequiredFields("first_name", "last_name", "email", "phone_number")
+
+	form.MinLength("first_name", 7, r)
+	form.MinLength("last_name", 7, r)
+	form.ValidEmail("email", r)
+	// form.Has("first_name", r)
+	// if Form has error
+	if !form.IsValid() {
+		data := make(map[string]interface{})
+		data["reservation"] = reservation
+		renders.RenderTemp(w, "makeReservation.page.tmpl", &models.TemplateData{
+			Form: form,
+			Data: data,
+		}, r)
+		return
+	}
+
 }
