@@ -13,6 +13,8 @@ type TemplateData struct {
 	Warning      string
 	Error        string
 	Form         *forms.Form
+	Start        string
+	End          string
 }
 
 //holds reservation Data

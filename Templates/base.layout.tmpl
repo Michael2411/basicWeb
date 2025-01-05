@@ -79,7 +79,7 @@
     </div>
   </div>
 
-  <script>
+<script>
   function promptMessage() {
     let errorMessage = function () {
       let alertMessage = "Please Enter All Required Data"
@@ -100,17 +100,20 @@
       successMessage: successMessage,
     }
   }
+
+
   // General Notification using toastify
   function showToastMessage(message, color, type) {
     Toastify({
       text: message,
       backgroundColor: color, // Red color for error
       className: type, // Class for error messages
-      position: "right",
+      position: "center",
       duration: 3000
     }).showToast();
   }
 
+  
   (() => {
     'use strict'
     // Fetch all the forms we want to apply custom Bootstrap validation styles to
@@ -132,61 +135,83 @@
       }, false)
     })
   })()
+
+  
+
 </script>
+<!-- This script is used for a general popout inputs if needed -->
+<script>
+  //popout form using sweetalert2
+  async function popUpInput(output) {
+    const {
+      msg = "",
+      title = "",
+    } = output
 
-  {{block "js" .}}
-  {{end}}
-  <!-- This script is used for a general popout inputs if needed -->
-  <script>
-    //popout form using sweetalert2
-    async function popUpInput(output) {
-      const {
-        msg = "",
-        title = "",
-      } = output
+    const { value: result } = await Swal.fire({
+      title: title,
+      html: msg,
+      backdrop: false,
+      focusConfirm: false,
+      showCancelButton: true,
+      willOpen: () => {
+       if(output.willOpen !== undefined){
+         output.willOpen();
+       }
+      },
+      // do things after the popout is opened
+      didOpen: () => {
+        if(output.didOpen !== undefined){
+         output.didOpen();
+       }
+      },
+      preConfirm: () => {
+        if(output.preConfirm !== undefined){
+         output.preConfirm();
+       }
+      }
+    });
+    if (result) {
+      if (result.dismiss !== Swal.DismissReason.cancel) {
+        if (result.value !== "") {
+          if (output.callback !== undefined) {
+            output.callback(result);
 
-      const { value: result } = await Swal.fire({
-        title: title,
-        html: msg,
-        backdrop: false,
-        focusConfirm: false,
-        showCancelButton: true,
-        willOpen: () => {
-         if(output.willOpen !== undefined){
-           output.willOpen();
-         }
-        },
-        // do things after the popout is opened
-        didOpen: () => {
-          if(output.didOpen !== undefined){
-           output.didOpen();
-         }
-        },
-        preConfirm: () => {
-          if(output.preConfirm !== undefined){
-           output.preConfirm();
-         }
-        }
-      });
-      if (result) {
-        if (result.dismiss !== Swal.DismissReason.cancel) {
-          if (result.value !== "") {
-            if (output.callback !== undefined) {
-              output.callback(result);
-
-            }
-          } else {
-            output.callback(false)
           }
         } else {
           output.callback(false)
         }
+      } else {
+        output.callback(false)
       }
-
     }
 
-  </script>
+  }
+</script>
 
+
+<!-- error when re-routing pages-->
+{{with .Error}}
+    <script>
+      showToastMessage("{{.}}","linear-gradient(to right, #ff5f6d, #ffc3a0)","error")
+    </script>
+{{end}}
+
+{{with .FlashMessage}}
+    <script>
+      showToastMessage("{{.}}","linear-gradient(to right, #00b09b, #96c93d)","success")
+    </script>
+{{end}}
+
+{{with .Warning}}
+    <script>
+      showToastMessage("{{.}}","","warning")
+    </script>
+{{end}}
+
+
+{{block "js" .}}
+{{end}}
 
 </body>
 

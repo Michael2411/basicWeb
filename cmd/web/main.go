@@ -1,9 +1,11 @@
 package main
 
 import (
+	models "GO-WEB/internal/Models"
 	"GO-WEB/internal/config"
 	handlers "GO-WEB/internal/handlers"
 	"GO-WEB/internal/render"
+	"encoding/gob"
 	"fmt"
 	"log"
 	"net/http"
@@ -18,7 +20,8 @@ var app config.AppConfig
 var session *scs.SessionManager
 
 func main() {
-
+	//Telling APP what kind of values we are going to store in the Session (specially for types we defined)
+	gob.Register(models.Reservation{})
 	//change to true when in Prod
 	app.InProduction = false
 

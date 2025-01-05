@@ -30,22 +30,12 @@ func NewHandlers(r *Repository) {
 }
 
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
-	remoteIp := r.RemoteAddr
-	log.Println(remoteIp)
-	m.App.Session.Put(r.Context(), "RemoteIP", remoteIp)
 	renders.RenderTemp(w, "home.page.tmpl", &models.TemplateData{}, r)
 }
 
 // About is the About page Handler
 func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
-	//preform some logic
-	stringMaplocal := make(map[string]string)
-	stringMaplocal["TEST"] = "TEST12312412"
-	remoteIp := m.App.Session.GetString(r.Context(), "RemoteIP")
-	stringMaplocal["RemoteIP"] = remoteIp
-	renders.RenderTemp(w, "about.page.tmpl", &models.TemplateData{
-		StringMap: stringMaplocal,
-	}, r)
+	renders.RenderTemp(w, "about.page.tmpl", &models.TemplateData{}, r)
 }
 
 func (m *Repository) Kratos(w http.ResponseWriter, r *http.Request) {
@@ -66,7 +56,10 @@ func (m *Repository) Reserve(w http.ResponseWriter, r *http.Request) {
 func (m *Repository) PostReserve(w http.ResponseWriter, r *http.Request) {
 	startDate := r.Form.Get("start_date")
 	endDate := r.Form.Get("end_date")
-	w.Write([]byte(startDate + "  " + endDate))
+	m.App.Session.Put(r.Context(), "startDate", startDate)
+	m.App.Session.Put(r.Context(), "endDate", endDate)
+	// Redirect after a success post using http redirect
+	http.Redirect(w, r, "/makeReservation", http.StatusSeeOther)
 }
 
 type jsonResponse struct {
@@ -116,15 +109,15 @@ func (m *Repository) PostMakeReservation(w http.ResponseWriter, r *http.Request)
 		FirstName: r.Form.Get("first_name"),
 		LastName:  r.Form.Get("last_name"),
 		Email:     r.Form.Get("email"),
-		Phone:     r.Form.Get("phone_Number"),
+		Phone:     r.Form.Get("phone_number"),
 	}
 
 	form := forms.NewForm(r.PostForm)
 
 	form.RequiredFields("first_name", "last_name", "email", "phone_number")
 
-	form.MinLength("first_name", 7, r)
-	form.MinLength("last_name", 7, r)
+	form.MinLength("first_name", 2, r)
+	form.MinLength("last_name", 2, r)
 	form.ValidEmail("email", r)
 	// form.Has("first_name", r)
 	// if Form has error
@@ -138,4 +131,45 @@ func (m *Repository) PostMakeReservation(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	m.App.Session.Put(r.Context(), "reservation", reservation)
+	// Redirect after a success post using http redirect
+	http.Redirect(w, r, "/reservation-summary", http.StatusSeeOther)
+
+}
+
+// Post Reservation Summary
+func (m *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) {
+	reservation, ok := m.App.Session.Get(r.Context(), "reservation").(models.Reservation)
+	if !ok {
+		log.Println("cannot get item from session")
+		m.App.Session.Put(r.Context(), "error", "Can't Get Reservation Details for this Session")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		return
+	}
+	data := make(map[string]interface{})
+	data["summary"] = reservation
+
+	startDate, ok := m.App.Session.Get(r.Context(), "startDate").(string)
+	if !ok {
+		log.Println("cannot get item from session")
+		return
+	}
+	endDate, ok := m.App.Session.Get(r.Context(), "endDate").(string)
+	if !ok {
+		log.Println("cannot get item from session")
+		return
+	}
+
+	//Remove data from session after getting the needed data
+	m.App.Session.Remove(r.Context(), "reservation")
+	m.App.Session.Remove(r.Context(), "startDate")
+	m.App.Session.Remove(r.Context(), "endDate")
+
+	// passing the form so that we can re-render the form based on the field validation and don't lose anything entered
+	renders.RenderTemp(w, "reservationSummary.page.tmpl",
+		&models.TemplateData{
+			Data:  data,
+			Start: startDate,
+			End:   endDate,
+		}, r)
 }

@@ -23,6 +23,13 @@ func NewTemplates(a *config.AppConfig) {
 
 func AddDefaultData(data *models.TemplateData, request *http.Request) *models.TemplateData {
 	data.CSRFToken = nosurf.Token(request)
+	// PopString retrieves a string value stored in the session for the given context.
+	// It removes the string from the session storage once it is retrieved, making it ideal
+	// for one-time use messages like warnings, notifications, or flash messages.
+	// If no value is found, it returns an empty string.
+	data.FlashMessage = app.Session.PopString(request.Context(), "flashMessage")
+	data.Warning = app.Session.PopString(request.Context(), "warning")
+	data.Error = app.Session.PopString(request.Context(), "error")
 	return data
 }
 func RenderTemp(w http.ResponseWriter, tmpl string, data *models.TemplateData, request *http.Request) {
