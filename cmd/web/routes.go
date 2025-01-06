@@ -43,6 +43,7 @@ func routesCHI(app *config.AppConfig) http.Handler {
 
 	mux.Get("/reservation-summary", http.HandlerFunc(handlers.Repo.ReservationSummary))
 
+	// to handle the static files
 	fileServer := http.FileServer(http.Dir("./static/"))
 	mux.Handle("/static/*", http.StripPrefix("/static", fileServer))
 

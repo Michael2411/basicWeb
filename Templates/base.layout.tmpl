@@ -136,11 +136,7 @@
     })
   })()
 
-  
-
-</script>
-<!-- This script is used for a general popout inputs if needed -->
-<script>
+  // This script is used for a general popout inputs if needed
   //popout form using sweetalert2
   async function popUpInput(output) {
     const {
@@ -187,8 +183,9 @@
     }
 
   }
-</script>
+  
 
+</script>
 
 <!-- error when re-routing pages-->
 {{with .Error}}
@@ -196,13 +193,11 @@
       showToastMessage("{{.}}","linear-gradient(to right, #ff5f6d, #ffc3a0)","error")
     </script>
 {{end}}
-
 {{with .FlashMessage}}
     <script>
       showToastMessage("{{.}}","linear-gradient(to right, #00b09b, #96c93d)","success")
     </script>
 {{end}}
-
 {{with .Warning}}
     <script>
       showToastMessage("{{.}}","","warning")
