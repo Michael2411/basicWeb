@@ -1,0 +1,26 @@
+mode: set
+GO-WEB/internal/handlers/handlers.go:21.47,25.2 1 1
+GO-WEB/internal/handlers/handlers.go:28.33,30.2 1 1
+GO-WEB/internal/handlers/handlers.go:32.67,34.2 1 1
+GO-WEB/internal/handlers/handlers.go:37.68,39.2 1 1
+GO-WEB/internal/handlers/handlers.go:41.69,44.2 1 1
+GO-WEB/internal/handlers/handlers.go:46.69,49.2 1 1
+GO-WEB/internal/handlers/handlers.go:51.81,54.2 1 1
+GO-WEB/internal/handlers/handlers.go:56.85,63.2 5 1
+GO-WEB/internal/handlers/handlers.go:71.83,75.16 3 1
+GO-WEB/internal/handlers/handlers.go:75.16,77.3 1 0
+GO-WEB/internal/handlers/handlers.go:78.2,79.14 2 1
+GO-WEB/internal/handlers/handlers.go:82.70,85.2 1 1
+GO-WEB/internal/handlers/handlers.go:87.78,99.2 4 1
+GO-WEB/internal/handlers/handlers.go:101.82,103.16 2 1
+GO-WEB/internal/handlers/handlers.go:103.16,106.3 2 0
+GO-WEB/internal/handlers/handlers.go:108.2,124.21 7 1
+GO-WEB/internal/handlers/handlers.go:124.21,132.3 4 1
+GO-WEB/internal/handlers/handlers.go:134.2,136.66 2 1
+GO-WEB/internal/handlers/handlers.go:141.81,143.9 2 1
+GO-WEB/internal/handlers/handlers.go:143.9,148.3 4 1
+GO-WEB/internal/handlers/handlers.go:149.2,153.9 4 0
+GO-WEB/internal/handlers/handlers.go:153.9,156.3 2 0
+GO-WEB/internal/handlers/handlers.go:157.2,158.9 2 0
+GO-WEB/internal/handlers/handlers.go:158.9,161.3 2 0
+GO-WEB/internal/handlers/handlers.go:164.2,174.8 4 0

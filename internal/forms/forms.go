@@ -79,6 +79,7 @@ type Input struct {
 // This validates that a string value contains a valid email This may not conform to all possibilities of any rfc standard,
 // but neither does any email provider accept all possibilities.
 func (f *Form) ValidEmail(field string, r *http.Request) bool {
+
 	//intialize the validator
 	validate := validator.New(validator.WithRequiredStructEnabled())
 	email := r.Form.Get(field)

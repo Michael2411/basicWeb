@@ -33,8 +33,8 @@ func routesCHI(app *config.AppConfig) http.Handler {
 	mux.Get("/kratos-room", http.HandlerFunc(handlers.Repo.Kratos))
 	mux.Get("/batman-room", http.HandlerFunc(handlers.Repo.Batman))
 
-	mux.Get("/reserve", http.HandlerFunc(handlers.Repo.Reserve))
-	mux.Post("/reserve", http.HandlerFunc(handlers.Repo.PostReserve))
+	mux.Get("/search-availability", http.HandlerFunc(handlers.Repo.SearchAvailability))
+	mux.Post("/search-availability", http.HandlerFunc(handlers.Repo.PostSearchAvailability))
 	mux.Post("/search-availability-json", http.HandlerFunc(handlers.Repo.RoomAvailabilityJson))
 
 	mux.Get("/contact", http.HandlerFunc(handlers.Repo.Contact))

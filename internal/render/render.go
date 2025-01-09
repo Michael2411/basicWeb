@@ -4,6 +4,7 @@ import (
 	models "GO-WEB/internal/Models"
 	"GO-WEB/internal/config"
 	"bytes"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -13,6 +14,7 @@ import (
 )
 
 var app *config.AppConfig
+var pathToTemplates = "./Templates"
 
 // NewTemplates sets the config for the templates packages. it gets the input from main()
 func NewTemplates(a *config.AppConfig) {
@@ -77,12 +79,12 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 	//--- you can also make map like this
 	myCache := map[string]*template.Template{}
 	//get all the files ending in page.tmpl from the Templates folder
-	pages, err := filepath.Glob("./Templates/*.page.tmpl")
+	pages, err := filepath.Glob(fmt.Sprintf("%s/*.page.tmpl", pathToTemplates))
 	if err != nil {
 		return myCache, err
 	}
 	//check if any layouts exists in the directory
-	layouts, err := filepath.Glob("./Templates/*.layout.tmpl")
+	layouts, err := filepath.Glob(fmt.Sprintf("%s/*.layout.tmpl", pathToTemplates))
 	if err != nil {
 		return myCache, err
 	}
@@ -101,7 +103,7 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 		if len(layouts) > 0 {
 			/* ParseGlob matches the layouts with the templates according to teh definitions in the templates themsevles what why we
 			we parse the templates first */
-			parsedTemplate, err = parsedTemplate.ParseGlob("./Templates/*.layout.tmpl")
+			parsedTemplate, err = parsedTemplate.ParseGlob(fmt.Sprintf("%s/*.layout.tmpl", pathToTemplates))
 			if err != nil {
 				return myCache, err
 			}

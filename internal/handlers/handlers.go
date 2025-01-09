@@ -48,12 +48,12 @@ func (m *Repository) Batman(w http.ResponseWriter, r *http.Request) {
 	renders.RenderTemp(w, "batman.page.tmpl", &models.TemplateData{}, r)
 }
 
-func (m *Repository) Reserve(w http.ResponseWriter, r *http.Request) {
+func (m *Repository) SearchAvailability(w http.ResponseWriter, r *http.Request) {
 
-	renders.RenderTemp(w, "reservation.page.tmpl", &models.TemplateData{}, r)
+	renders.RenderTemp(w, "searchAvailability.page.tmpl", &models.TemplateData{}, r)
 }
 
-func (m *Repository) PostReserve(w http.ResponseWriter, r *http.Request) {
+func (m *Repository) PostSearchAvailability(w http.ResponseWriter, r *http.Request) {
 	startDate := r.Form.Get("start_date")
 	endDate := r.Form.Get("end_date")
 	m.App.Session.Put(r.Context(), "startDate", startDate)
@@ -137,7 +137,7 @@ func (m *Repository) PostMakeReservation(w http.ResponseWriter, r *http.Request)
 
 }
 
-// Post Reservation Summary
+// GET Reservation Summary
 func (m *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) {
 	reservation, ok := m.App.Session.Get(r.Context(), "reservation").(models.Reservation)
 	if !ok {

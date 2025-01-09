@@ -6,7 +6,6 @@ import (
 	handlers "GO-WEB/internal/handlers"
 	"GO-WEB/internal/render"
 	"encoding/gob"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -20,6 +19,25 @@ var app config.AppConfig
 var session *scs.SessionManager
 
 func main() {
+	err := run()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = startServer(portNumber, routesCHI(&app))
+	log.Fatal(err)
+}
+
+func startServer(port string, handler http.Handler) error {
+	server := &http.Server{
+		Addr:    port,
+		Handler: handler,
+	}
+	return server.ListenAndServe()
+}
+
+func run() error {
+
 	//Telling APP what kind of values we are going to store in the Session (specially for types we defined)
 	gob.Register(models.Reservation{})
 	//change to true when in Prod
@@ -39,6 +57,7 @@ func main() {
 	tempCache, err := render.CreateTemplateCache()
 	if err != nil {
 		log.Fatal("Cannot Create Template Cache")
+		return err
 	}
 	app.TemplateCache = tempCache
 	app.UseCache = false
@@ -51,13 +70,5 @@ func main() {
 	// http.HandleFunc("/", handlers.Repo.Home)
 	// http.HandleFunc("/about", handlers.Repo.About)
 
-	fmt.Printf("Starting App on Port %s", portNumber)
-
-	server := &http.Server{
-		Addr:    portNumber,
-		Handler: routesCHI(&app),
-	}
-
-	err = server.ListenAndServe()
-	log.Fatal(err)
+	return err
 }
