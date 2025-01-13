@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	models "GO-WEB/internal/Models"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -32,17 +33,19 @@ var theTests = []struct {
 	{"POST Search Availability json", "/search-availability-json", "POST", []postData{}, http.StatusOK},
 	{"Contact", "/contact", "GET", []postData{}, http.StatusOK},
 	{"GET make reservation", "/makeReservation", "GET", []postData{}, http.StatusOK},
+	{"POST Make Reservation missing validation", "/makeReservation", "POST", []postData{
+		{key: "last_name", value: ""},
+		{key: "email", value: "minakhl"},
+		{key: "phone_number", value: "536764604"},
+	}, http.StatusOK},
 	{"POST Make Reservation", "/makeReservation", "POST", []postData{
 		{key: "first_name", value: "Michael"},
 		{key: "last_name", value: "Nakhla"},
 		{key: "email", value: "minakhl@ejada.com"},
 		{key: "phone_number", value: "536764604"},
 	}, http.StatusOK},
-	{"POST Make Reservation missing validation", "/makeReservation", "POST", []postData{
-		{key: "last_name", value: ""},
-		{key: "email", value: "minakhl"},
-		{key: "phone_number", value: "536764604"},
-	}, http.StatusOK},
+
+	{"Summary", "/reservation-summary", "GET", []postData{}, http.StatusOK},
 }
 
 func convertParamsToFormData(params []postData) url.Values {
@@ -52,7 +55,30 @@ func convertParamsToFormData(params []postData) url.Values {
 	}
 	return values
 }
+func getSession() (*http.Request, error) {
+	// Create a new HTTP GET request targeting the "/dummy" path with no body.
+	r, err := http.NewRequest("GET", "/dummy", nil)
+	if err != nil {
+		// If the request creation fails, return the error to the caller.
+		return nil, err
+	}
 
+	// Retrieve the current context associated with the HTTP request.
+	ctx := r.Context()
+
+	// Load the session context into the current context using the value from the "X-Session" header.
+	// The `session.Load` function initializes or retrieves session data based on the header value.
+	// Here, the second returned value (likely an error) is ignored.
+	ctx, err = app.Session.Load(ctx, r.Header.Get("X-Session"))
+	if err != nil {
+		return nil, err
+	}
+	// Update the HTTP request to include the modified context.
+	r = r.WithContext(ctx)
+
+	// Return the modified request containing the session context.
+	return r, nil
+}
 func TestHandlers(t *testing.T) {
 
 	// routes is basically the mux
@@ -67,6 +93,18 @@ func TestHandlers(t *testing.T) {
 	for _, test := range theTests {
 		// we have now to type of Test, get and post and each needs different logic
 		if test.method == "GET" {
+			if test.testName == "Summary" {
+				r, _ := getSession()
+				reservation := models.Reservation{
+					FirstName: "first_name",
+					LastName:  "last_name",
+					Email:     "email@ejada.com",
+					Phone:     "phone_number",
+				}
+				app.Session.Put(r.Context(), "reservation", reservation)
+				app.Session.Put(r.Context(), "startDate", "2024-12-12")
+				app.Session.Put(r.Context(), "endDate", "2025-12-12")
+			}
 			// Client creates a web server and then call GET on it
 			resp, err := testServer.Client().Get(testServer.URL + test.testURL) //testServer.URL = base URL of form http://ipaddr:port
 			if err != nil {

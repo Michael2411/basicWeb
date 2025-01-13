@@ -4,6 +4,7 @@ import (
 	models "GO-WEB/internal/Models"
 	"GO-WEB/internal/config"
 	"bytes"
+	"errors"
 	"fmt"
 	"html/template"
 	"log"
@@ -34,7 +35,7 @@ func AddDefaultData(data *models.TemplateData, request *http.Request) *models.Te
 	data.Error = app.Session.PopString(request.Context(), "error")
 	return data
 }
-func RenderTemp(w http.ResponseWriter, tmpl string, data *models.TemplateData, request *http.Request) {
+func RenderTemp(w http.ResponseWriter, tmpl string, data *models.TemplateData, request *http.Request) error {
 	var templateCache map[string]*template.Template
 	var err error
 
@@ -43,7 +44,8 @@ func RenderTemp(w http.ResponseWriter, tmpl string, data *models.TemplateData, r
 	if !app.UseCache {
 		templateCache, err = CreateTemplateCache()
 		if err != nil {
-			log.Fatal("failed to create template cache")
+			log.Print("failed to create template cache")
+			return (err)
 		}
 	} else {
 		// fetch template cache created in main from AppConfig which was passed using NewTemplates()
@@ -53,7 +55,9 @@ func RenderTemp(w http.ResponseWriter, tmpl string, data *models.TemplateData, r
 	//get requested template from cache
 	template, exists := templateCache[tmpl]
 	if !exists {
-		log.Fatal("Template Doesn't exist")
+		log.Print("Template Doesn't exist")
+		err = errors.New("template doesn't exist")
+		return (err)
 	}
 	// buffer is used to be able to execute and get the error without writing directly to response writer
 	// it gives better handling of this template
@@ -64,13 +68,16 @@ func RenderTemp(w http.ResponseWriter, tmpl string, data *models.TemplateData, r
 	err = template.Execute(buffer, data)
 	if err != nil {
 		log.Println(err)
+		return (err)
 	}
 
 	//render the template
 	_, err = buffer.WriteTo(w)
 	if err != nil {
 		log.Println(err)
+		return (err)
 	}
+	return nil
 }
 
 // called in main to create cached renedred templates only once

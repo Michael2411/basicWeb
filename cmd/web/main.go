@@ -4,10 +4,12 @@ import (
 	models "GO-WEB/internal/Models"
 	"GO-WEB/internal/config"
 	handlers "GO-WEB/internal/handlers"
+	"GO-WEB/internal/helpers"
 	"GO-WEB/internal/render"
 	"encoding/gob"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/alexedwards/scs/v2"
@@ -17,6 +19,8 @@ const portNumber = ":8080"
 
 var app config.AppConfig
 var session *scs.SessionManager
+var infoLog *log.Logger
+var errorLog *log.Logger
 
 func main() {
 	err := run()
@@ -43,6 +47,12 @@ func run() error {
 	//change to true when in Prod
 	app.InProduction = false
 
+	infoLog = log.New(os.Stdout, "Info:\t", log.Ldate|log.Ltime)
+	app.InfoLog = infoLog
+
+	errorLog = log.New(os.Stdout, "Error:\t", log.Ldate|log.Ltime|log.Lshortfile)
+	app.ErrorLog = errorLog
+
 	session = scs.New()
 	session.Lifetime = 24 * time.Hour
 	// to make session persist if browser closed
@@ -63,12 +73,9 @@ func run() error {
 	app.UseCache = false
 
 	render.NewTemplates(&app)
-
+	helpers.NewHelpers(&app)
 	repo := handlers.NewRepo(&app)
 	handlers.NewHandlers(repo)
-
-	// http.HandleFunc("/", handlers.Repo.Home)
-	// http.HandleFunc("/about", handlers.Repo.About)
 
 	return err
 }

@@ -2,7 +2,6 @@ package forms
 
 import (
 	"fmt"
-	"net/http"
 	"net/url"
 	"strings"
 
@@ -53,8 +52,8 @@ func (f *Form) RequiredFields(fields ...string) {
 }
 
 // Has , check if form is in POST and not empty
-func (f *Form) Has(field string, r *http.Request) bool {
-	checkedField := r.Form.Get(field)
+func (f *Form) Has(field string) bool {
+	checkedField := f.Get(field)
 	if checkedField == "" {
 		f.Errors.AddError(field, "This field cannot be empty")
 		return false
@@ -62,8 +61,8 @@ func (f *Form) Has(field string, r *http.Request) bool {
 	return true
 }
 
-func (f *Form) MinLength(field string, length int, r *http.Request) bool {
-	checkedField := r.Form.Get(field)
+func (f *Form) MinLength(field string, length int) bool {
+	checkedField := f.Get(field)
 	if len(checkedField) < length {
 		f.Errors.AddError(field, fmt.Sprintf("Must be at least %d characters", length))
 		return false
@@ -78,11 +77,11 @@ type Input struct {
 
 // This validates that a string value contains a valid email This may not conform to all possibilities of any rfc standard,
 // but neither does any email provider accept all possibilities.
-func (f *Form) ValidEmail(field string, r *http.Request) bool {
+func (f *Form) ValidEmail(field string) bool {
 
 	//intialize the validator
 	validate := validator.New(validator.WithRequiredStructEnabled())
-	email := r.Form.Get(field)
+	email := f.Get(field)
 	input := Input{Email: email}
 	err := validate.Struct(input)
 	if err != nil {

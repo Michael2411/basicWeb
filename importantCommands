@@ -3,6 +3,7 @@ git commit -m ""
 git push
 
 
-go test -coverprofile=coverage.out path
+go test -coverprofile=coverage.out ./internal/handlers 
 go test -v path
 go tool cover -html=coverage.out
+go test -v ./...  #run in all tests made

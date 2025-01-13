@@ -3,12 +3,14 @@ package handlers
 import (
 	models "GO-WEB/internal/Models"
 	"GO-WEB/internal/config"
+	"GO-WEB/internal/helpers"
 	"GO-WEB/internal/render"
 	"encoding/gob"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 	"time"
 
@@ -20,6 +22,8 @@ import (
 
 var app config.AppConfig
 var session *scs.SessionManager
+var infoLog *log.Logger
+var errorLog *log.Logger
 
 func getRoutes() http.Handler {
 	//Telling APP what kind of values we are going to store in the Session (specially for types we defined)
@@ -37,7 +41,11 @@ func getRoutes() http.Handler {
 	session.Cookie.Secure = app.InProduction
 
 	app.Session = session
+	infoLog = log.New(os.Stdout, "Info:\t", log.Ldate|log.Ltime)
+	app.InfoLog = infoLog
 
+	errorLog = log.New(os.Stdout, "Error:\t", log.Ldate|log.Ltime|log.Lshortfile)
+	app.ErrorLog = errorLog
 	tempCache, err := CreateTestTemplateCache()
 	if err != nil {
 		log.Fatal("Cannot Create Template Cache")
@@ -47,7 +55,7 @@ func getRoutes() http.Handler {
 	app.UseCache = true // set true to avoid an error in the routes createTeplateCache funciton
 
 	render.NewTemplates(&app)
-
+	helpers.NewHelpers(&app)
 	repo := NewRepo(&app)
 	NewHandlers(repo)
 
